@@ -1,0 +1,29 @@
+name: Build and Push to Quay
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the Image
+        uses: redhat-actions/buildah-build@v2
+        id: build-image
+        with:
+          image: snafuti
+          tags: latest ${{ github.sha }}
+          dockerfiles: ./Containerfile
+      - name: Push the Image
+        uses: redhat-actions/push-to-registry@v2
+        id: push-image
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: quay.io/learnitall
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Print image url
+        run: echo "Image pushed to ${{ steps.push-image.outputs.registry-paths }}"
