@@ -33,25 +33,29 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && rm -f /var/cache/apt/archives/*.deb
 
-# Install ``pyenv``.
-RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
+# Create snafu user
+RUN useradd --user-group --uid 1337 --create-home --shell /bin/bash snafu
+USER snafu
+
+# Install pyenv
+RUN git clone https://github.com/pyenv/pyenv /home/snafu/.pyenv
 
 # Install the desired versions of Python.
 RUN for PYTHON_VERSION in 3.6.13 3.7.10 3.8.10 3.9.5; do \
   set -ex \
-    && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
-    && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
+    && /home/snafu/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
+    && /home/snafu/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
 
 # Install tox for 3.9
-RUN /root/.pyenv/versions/3.9.5/bin/python -m pip install tox
+RUN /home/snafu/.pyenv/versions/3.9.5/bin/python -m pip install tox
 
 # Add to PATH, in order of lowest precedence to highest.
-ENV PATH /root/.pyenv/versions/3.6.13/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.7.10/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.8.10/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.9.5/bin:${PATH}
+ENV PATH /home/snafu/.pyenv/versions/3.6.13/bin:${PATH}
+ENV PATH /home/snafu/.pyenv/versions/3.7.10/bin:${PATH}
+ENV PATH /home/snafu/.pyenv/versions/3.8.10/bin:${PATH}
+ENV PATH /home/snafu/.pyenv/versions/3.9.5/bin:${PATH}
 
-VOLUME ["/root/snafu"]
-WORKDIR /root/snafu
+VOLUME ["/home/snafu/snafu"]
+WORKDIR /home/snafu/snafu
 CMD ["python3.9", "-m", "tox"]
