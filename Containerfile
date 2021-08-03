@@ -1,16 +1,37 @@
-FROM alpine:latest
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND noninteractive
 
 # Install dependencies.
-RUN apk add --no-cache \
-  git \
-  bash \
-  build-base \
-  libffi-dev \
-  openssl-dev \
-  bzip2-dev \
-  zlib-dev \
-  readline-dev \
-  sqlite-dev
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    make \
+    build-essential \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    curl \
+    llvm \
+    libncurses5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    git \
+    ca-certificates \
+    libffi-dev \
+    gfortran \
+    libopenblas-dev \
+    liblapack-dev \
+    iputils-ping \
+    pandoc \
+  && apt-get clean autoclean \
+  && apt-get autoremove -y \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -f /var/cache/apt/archives/*.deb
 
 # Install ``pyenv``.
 RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
