@@ -41,7 +41,7 @@ USER snafu
 RUN git clone https://github.com/pyenv/pyenv /home/snafu/.pyenv
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 3.6.13 3.7.10 3.8.10 3.9.5; do \
+RUN for PYTHON_VERSION in 3.6.13 3.7.10 3.8.10 3.9.6; do \
   set -ex \
     && /home/snafu/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /home/snafu/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
