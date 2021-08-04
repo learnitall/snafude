@@ -48,13 +48,13 @@ RUN for PYTHON_VERSION in 3.6.13 3.7.10 3.8.10 3.9.6; do \
   ; done
 
 # Install tox for 3.9
-RUN /home/snafu/.pyenv/versions/3.9.5/bin/python -m pip install tox
+RUN /home/snafu/.pyenv/versions/3.9.6/bin/python -m pip install tox
 
 # Add to PATH, in order of lowest precedence to highest.
 ENV PATH /home/snafu/.pyenv/versions/3.6.13/bin:${PATH}
 ENV PATH /home/snafu/.pyenv/versions/3.7.10/bin:${PATH}
 ENV PATH /home/snafu/.pyenv/versions/3.8.10/bin:${PATH}
-ENV PATH /home/snafu/.pyenv/versions/3.9.5/bin:${PATH}
+ENV PATH /home/snafu/.pyenv/versions/3.9.6/bin:${PATH}
 
 VOLUME ["/home/snafu/snafu"]
 WORKDIR /home/snafu/snafu
