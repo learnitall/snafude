@@ -3,18 +3,23 @@ on:
   push:
     branches:
       - main
-
 jobs:
   build_image:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - arm64
     steps:
       - uses: actions/checkout@v2
       - name: Build the Image
         uses: redhat-actions/buildah-build@v2
         id: build-image
         with:
+          arch: ${{ matrix.arch }}
           image: snafuti
-          tags: latest ${{ github.sha }}
+          tags: latest-${{ matrix.arch }} ${{ github.sha }}-${{ matrix.arch }}
           dockerfiles: ./Containerfile
       - name: Push the Image
         uses: redhat-actions/push-to-registry@v2
@@ -27,3 +32,22 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Print image url
         run: echo "Image pushed to ${{ steps.push-image.outputs.registry-paths }}"
+  create_manifest:
+    runs-on: ubuntu-latest
+    env:
+      archs: amd64 arm64
+    steps:
+      - name: Login to Quay
+        run: podman login ${{ secrets.REGISTRY_USERNAME }} ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Build manifest
+        run: |
+          set -x
+          for tag in latest ${{ github.sha }}
+          do
+              podman manifest create quay.io/rydrew/snafuti:$tag
+              for arch in ${{ env.archs }}
+              do
+                  podman manifest add quay.io/rydrew/snafuti:$tag quay.io/rydrew/snafuti:$tag-$arch
+              done
+              podman manifest push quay.io/rydrew/snafuti:$tag
+          done
