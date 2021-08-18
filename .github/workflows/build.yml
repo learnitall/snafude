@@ -41,7 +41,7 @@ jobs:
       archs: amd64 arm64
     steps:
       - name: Login to Quay
-        run: podman login ${{ secrets.REGISTRY_USERNAME }} ${{ secrets.REGISTRY_PASSWORD }}
+        run: podman login quay.io --username ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build manifest
         run: |
           set -x
