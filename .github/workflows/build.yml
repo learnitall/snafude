@@ -52,5 +52,5 @@ jobs:
               do
                   podman manifest add quay.io/rydrew/snafuti:$tag quay.io/rydrew/snafuti:$tag-$arch
               done
-              podman manifest push quay.io/rydrew/snafuti:$tag
+              podman manifest push quay.io/rydrew/snafuti:$tag quay.io/rydrew/snafuti:$tag
           done
